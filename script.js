@@ -1,19 +1,18 @@
-// Custom cursor
 const cursor = document.querySelector('.custom-cursor');
 document.addEventListener('mousemove', e => {
   cursor.style.left = e.clientX + 'px';
   cursor.style.top = e.clientY + 'px';
 });
 
-// Section reveal on scroll
-const sections = document.querySelectorAll('.section');
+const fadeEls = document.querySelectorAll('.fade-in');
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.style.opacity = 1;
-      entry.target.style.transform = 'translateY(0px)';
+      entry.target.classList.add('animate');
+      entry.target.style.animationDelay = '0.2s';
+      observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.2 });
+}, { threshold: 0.1 });
 
-sections.forEach(section => observer.observe(section));
+fadeEls.forEach(el => observer.observe(el));

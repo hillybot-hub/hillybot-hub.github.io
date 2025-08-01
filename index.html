@@ -18,21 +18,67 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
-    <section class="hero-content">
+    <section class="hero-content fade-in">
       <h1 class="headline">Hi, I'm Pratik.<br /><span>Creative Developer</span></h1>
-      <p class="tagline">Crafting next-gen experiences with code & design.</p>
+      <p class="tagline">Crafting immersive digital experiences through code & design.</p>
       <button class="cta">Explore ↓</button>
     </section>
   </header>
+
   <main>
-    <section id="about" class="section">About Section</section>
-    <section id="projects" class="section">Projects Section</section>
-    <section id="skills" class="section">Skills Section</section>
-    <section id="contact" class="section">Contact Section</section>
+    <section id="about" class="section fade-in">
+      <div class="container">
+        <h2>About Me</h2>
+        <p>I specialize in creating web applications that push the boundaries of user experience. With a strong background in animation, UX, and full-stack development, I strive to build interfaces that are not only functional but also delightful.</p>
+      </div>
+    </section>
+
+    <section id="projects" class="section fade-in">
+      <div class="container">
+        <h2>Projects</h2>
+        <div class="project-grid">
+          <div class="project-card">
+            <h3>AI ChatBot</h3>
+            <p>Built a real-time chatbot using LLMs, featuring speech synthesis and animated responses.</p>
+          </div>
+          <div class="project-card">
+            <h3>3D Portfolio</h3>
+            <p>Interactive WebGL-based portfolio featuring scroll-triggered animations and shader effects.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section fade-in">
+      <div class="container">
+        <h2>Skills</h2>
+        <ul class="skills-list">
+          <li>JavaScript</li>
+          <li>React</li>
+          <li>Three.js</li>
+          <li>GSAP Animations</li>
+          <li>UX/UI Design</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contact" class="section fade-in">
+      <div class="container">
+        <h2>Contact Me</h2>
+        <form>
+          <input type="text" placeholder="Your Name" required />
+          <input type="email" placeholder="Your Email" required />
+          <textarea rows="5" placeholder="Your Message"></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </section>
   </main>
+
   <footer>
-    <p>&copy; 2025 Pratik Subedi. All rights reserved.</p>
+    <p>&copy; 2025 Pratik Subedi. Built with ❤️ and caffeine.</p>
   </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
