@@ -1,66 +1,145 @@
-const cursor = document.querySelector('.custom-cursor');
+// GSAP and ScrollTrigger Animations + Custom Cursor + Contact Form Validation
 
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-});
+gsap.registerPlugin(ScrollTrigger);
 
-document.querySelectorAll('button, a, video').forEach(elem => {
-  elem.addEventListener('mouseenter', () => cursor.classList.add('active'));
-  elem.addEventListener('mouseleave', () => cursor.classList.remove('active'));
-});
-
-// Animate skill bars on scroll
-const skillBars = document.querySelectorAll('.skill-fill');
-const options = {
-  threshold: 0.5
-};
-
-const skillObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting) {
-      const bar = entry.target;
-      bar.style.width = bar.style.width || bar.getAttribute('style') || '';
-      // Animate width property
-      bar.style.width = bar.style.width || bar.style.width || '';
-      bar.style.animation = 'fillSkillBar 2s forwards';
-      skillObserver.unobserve(bar);
+// Split Text helper — splits each letter into spans
+function splitText(selector) {
+  const elements = document.querySelectorAll(selector);
+  elements.forEach(el => {
+    const text = el.textContent;
+    el.innerHTML = '';
+    for (const char of text) {
+      const span = document.createElement('span');
+      span.textContent = char;
+      el.appendChild(span);
     }
   });
-}, options);
+}
+splitText('.split-text');
 
-skillBars.forEach(bar => {
-  skillObserver.observe(bar);
-});
-
-// Fade in elements on scroll
-const faders = document.querySelectorAll('h2, p, .project-card, .skill-name, form, .hero-title, .hero-subtitle, .hero-cta');
-const appearOptions = {
-  threshold: 0,
-  rootMargin: "0px 0px -100px 0px"
-};
-
-const appearOnScroll = new IntersectionObserver((entries, appearOnScroll) => {
-  entries.forEach(entry => {
-    if(!entry.isIntersecting) return;
-    entry.target.classList.add('fade-in');
-    appearOnScroll.unobserve(entry.target);
+// Animate split text — reveal letters from below on scroll
+function animateSplitText() {
+  document.querySelectorAll('.split-text').forEach(el => {
+    gsap.fromTo(el.children, {
+      yPercent: 100,
+      opacity: 0,
+    }, {
+      yPercent: 0,
+      opacity: 1,
+      stagger: 0.05,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 80%',
+        toggleActions: 'play none none none',
+      }
+    });
   });
-}, appearOptions);
+}
+animateSplitText();
 
-faders.forEach(fader => {
-  appearOnScroll.observe(fader);
+// Parallax shapes in About Section
+const aboutShapes = document.querySelectorAll('#about .parallax-shapes div');
+window.addEventListener('mousemove', e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  aboutShapes.forEach((shape, i) => {
+    const speed = (i + 1) * 5;
+    shape.style.transform = `translate3d(${x * speed}px, ${y * speed}px, 0)`;
+  });
 });
 
-// Contact form submission simulation
-const form = document.getElementById('contactForm');
-const formMessage = document.getElementById('formMessage');
+// Animate skill bars filling when skills section enters viewport
+function animateSkillBars() {
+  const skillBars = document.querySelectorAll('.skill-bar-fill');
+  skillBars.forEach(bar => {
+    const fillPercent = bar.dataset.fill;
+    gsap.fromTo(bar, {width: '0%'}, {
+      width: fillPercent + '%',
+      duration: 1.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: bar.closest('.skill'),
+        start: 'top 90%',
+        toggleActions: 'play none none none',
+      }
+    });
+  });
+}
+animateSkillBars();
 
-form.addEventListener('submit', e => {
+// Scroll to Projects button
+const scrollBtn = document.getElementById('scrollToProjects');
+scrollBtn.addEventListener('click', () => {
+  gsap.to(window, {duration: 1.3, scrollTo: '#projects', ease: 'power3.inOut'});
+});
+
+// Hero background subtle parallax on scroll
+gsap.to('#hero .bg-layer', {
+  yPercent: 15,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '#hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: true,
+  }
+});
+
+// Project cards hover 3D tilt effect
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * 7;
+    const rotateY = ((x - centerX) / centerX) * 7;
+    card.style.transform = `perspective(600px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)';
+  });
+});
+
+// Custom cursor implementation
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  gsap.to(cursor, {
+    duration: 0.15,
+    x: e.clientX,
+    y: e.clientY,
+    ease: 'power3.out',
+  });
+});
+
+// Cursor scaling on hover for interactive elements
+const hoverTargets = document.querySelectorAll('button, a, .project-card');
+hoverTargets.forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+});
+
+// Contact form validation + fake submission
+const contactForm = document.getElementById('contactForm');
+const formMsg = document.getElementById('form-msg');
+
+contactForm.addEventListener('submit', e => {
   e.preventDefault();
-  formMessage.textContent = 'Sending...';
+  formMsg.textContent = '';
+  if (!contactForm.checkValidity()) {
+    formMsg.textContent = 'Please fill out the form correctly.';
+    formMsg.style.color = '#ff6b6b';
+    return;
+  }
+
+  // Simulate sending
+  formMsg.style.color = '#39b2ff';
+  formMsg.textContent = 'Sending...';
   setTimeout(() => {
-    formMessage.textContent = 'Thank you for reaching out! I will get back to you soon.';
-    form.reset();
-  }, 2000);
+    formMsg.textContent = 'Message sent successfully! Thank you.';
+    contactForm.reset();
+  }, 1500);
 });
