@@ -1,52 +1,62 @@
-// Year in footer
-document.getElementById("year").textContent = new Date().getFullYear();
+/*=============== SHOW MENU ===============*/
+const navMenu = document.getElementById("nav-menu"),
+  navToggle = document.getElementById("nav-toggle"),
+  navClose = document.getElementById("nav-close");
 
-// Mobile menu
-const menuBtn = document.getElementById("menu-toggle");
-const navMenu = document.getElementById("nav-menu");
-if (menuBtn && navMenu) {
-  menuBtn.addEventListener("click", () => navMenu.classList.toggle("open"));
-  navMenu.querySelectorAll("a").forEach(a =>
-    a.addEventListener("click", () => navMenu.classList.remove("open"))
-  );
+if (navToggle) {
+  navToggle.addEventListener("click", () => {
+    navMenu.classList.add("show-menu");
+  });
 }
 
-// Theme toggle (persist to localStorage)
-const themeBtn = document.getElementById("theme-toggle");
-const themeIcon = document.getElementById("theme-icon");
-const applyTheme = (mode) => {
-  document.body.classList.toggle("light", mode === "light");
-  localStorage.setItem("theme", mode);
-  if (themeIcon) themeIcon.className = mode === "light" ? "ri-moon-line" : "ri-sun-line";
-};
-applyTheme(localStorage.getItem("theme") || "dark");
-themeBtn?.addEventListener("click", () => {
-  const mode = document.body.classList.contains("light") ? "dark" : "light";
-  applyTheme(mode);
-});
+if (navClose) {
+  navClose.addEventListener("click", () => {
+    navMenu.classList.remove("show-menu");
+  });
+}
 
-// ScrollReveal (guarded)
-try {
-  if (window.ScrollReveal) {
-    ScrollReveal().reveal(".section h2", { distance: "20px", origin: "bottom", interval: 80 });
-    ScrollReveal().reveal(".card", { distance: "20px", origin: "bottom", interval: 60 });
-  }
-} catch { /* no-op */ }
+/*=============== REMOVE MENU ON LINK CLICK ===============*/
+const navLink = document.querySelectorAll(".nav__link");
 
-// EmailJS (optional; won’t error if you don’t set a key)
-try {
-  if (window.emailjs) {
-    // TODO: replace with your public key: emailjs.init({ publicKey: "YOUR_PUBLIC_KEY" });
-  }
-} catch { /* no-op */ }
+function linkAction() {
+  navMenu.classList.remove("show-menu");
+}
+navLink.forEach((n) => n.addEventListener("click", linkAction));
 
-const form = document.getElementById("contact-form");
-const statusEl = document.getElementById("form-status");
-form?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  statusEl.textContent = "Sending...";
-  // Dummy delay to show it works (replace with actual EmailJS send)
-  await new Promise(r => setTimeout(r, 500));
-  statusEl.textContent = "Thanks! Message queued (demo).";
-  form.reset();
-});
+/*=============== SCROLL UP BUTTON ===============*/
+function scrollUp() {
+  const scrollUp = document.getElementById("scroll-up");
+  if (this.scrollY >= 350) scrollUp.classList.add("show-scroll");
+  else scrollUp.classList.remove("show-scroll");
+}
+window.addEventListener("scroll", scrollUp);
+
+/*=============== SCROLLREVEAL ANIMATIONS ===============*/
+if (window.ScrollReveal) {
+  const sr = ScrollReveal({
+    origin: "bottom",
+    distance: "40px",
+    duration: 1200,
+    delay: 200,
+    reset: false,
+  });
+
+  sr.reveal(".home__name, .home__description, .home__social, .home__scroll-text", {
+    interval: 150,
+  });
+  sr.reveal(".about__container, .services__item, .projects__card, .contact__container", {
+    interval: 100,
+  });
+}
+
+/*=============== EMAILJS (demo only) ===============*/
+// Replace YOUR_PUBLIC_KEY / YOUR_SERVICE_ID / YOUR_TEMPLATE_ID when ready
+const contactForm = document.getElementById("contact-form");
+
+if (contactForm) {
+  contactForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    alert("Message sent successfully ✅ (demo only)");
+    contactForm.reset();
+  });
+}
